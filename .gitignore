@@ -1,0 +1,15 @@
+/target/
+
+# Archivos de depuración (Windows)
+*.pdb
+
+# Copias de seguridad de rustfmt
+**/*.rs.bk
+
+# Archivos del sistema (macOS/Linux)
+.DS_Store
+
+# Archivos temporales del editor
+*.swp
+*.swo
+*~
