@@ -1,0 +1,44 @@
+Compilador Ashaninka
+====================
+
+Este proyecto es un analizador léxico para un lenguaje de programación 
+basado en Python, desarrollado como parte del curso de Lenguajes y 
+Compiladores.
+
+¿Por qué Ashaninka?
+-------------------
+
+Elegí el idioma ashaninka como homenaje a la valiente lucha de esta 
+población nativa contra Sendero Luminoso en los años 80 y 90. Su 
+resistencia y defensa del territorio fueron fundamentales para la 
+historia del Perú. Este proyecto busca visibilizar su lengua en el 
+mundo de la tecnología.
+
+Sintaxis Implementada
+---------------------
+
+El lenguaje usa palabras reservadas abreviadas del ashaninka:
+
+* toy  → entero (int)
+* pai  → si (if)
+* pawa → imprimir (print)
+
+Ejemplo de código:
+
+toy edad = 18
+pai edad >= 18 {
+    pawa "Mayor de edad"
+}
+
+Estructura
+----------
+
+src/main.rs  - Código fuente del analizador léxico
+main.ask     - Archivo de ejemplo
+
+Compilar y ejecutar
+-------------------
+
+cargo build --release
+cargo run -- programa.ashaninka
+

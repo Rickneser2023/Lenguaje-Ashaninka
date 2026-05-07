@@ -6,7 +6,8 @@ enum Token {
     //int = toy; float = kametsa; double = kametsa_ints; bool = iri; string = asanki; char = pitsi;
     //void = maika
     PalabraReservada,
-    Variable(String),  
+    Variable(String),
+    Equal,
 }
 
 struct Lexer {
@@ -34,15 +35,17 @@ impl Lexer {
 
         let inicio = self.pos;
         while self.pos < self.texto.len() && 
-              (self.texto[self.pos].is_alphanumeric() || self.texto[self.pos] == '\'') {
+              (self.texto[self.pos].is_alphanumeric() || self.texto[self.pos] == '=') {
             self.pos += 1;
         }
 
         let palabra: String = self.texto[inicio..self.pos].iter().collect();
 
-        if palabra == "t'oyari" {
+        if palabra == "toy" {
             Some(Token::PalabraReservada)
-        } else {
+        } else if palabra == "="{
+            Some(Token::Equal)
+        }else {
             Some(Token::Variable(palabra))
         }
     }
@@ -50,11 +53,11 @@ impl Lexer {
 
 fn main() {
     let args: Vec<String> = env::args().collect();
-    //nose   
+    
     let codigo = if args.len() > 1 {
         fs::read_to_string(&args[1]).expect("No se pudo leer el archivo")
     } else {
-        "t'oyari".to_string()
+        "toy x".to_string()
     };
 
     println!("Código: {}", codigo);
@@ -66,8 +69,9 @@ fn main() {
     
     while let Some(token) = lexer.obtener_token() {
         match token {
-            Token::PalabraReservada => println!("  {}. Palabra reservada: t'oyari", contador),
+            Token::PalabraReservada => println!("  {}. Palabra reservada: toy", contador),
             Token::Variable(nombre) => println!("  {}. Variable: {}", contador, nombre),
+            Token::Equal => println!("  {}. '='",contador),
         }
         contador += 1;
     }
