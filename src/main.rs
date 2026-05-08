@@ -5,8 +5,11 @@ use std::env;
 enum Token {
     //int = toy; float = kametsa; double = kametsa_ints; bool = iri; string = asanki; char = pitsi;
     //void = maika
-    PalabraReservada(String),
+    AsankiKeyword,
+    ToyKeyword,
+    KametsaKeyword,
     Variable(String),
+    Valor(String),
     Equal,
 }
 
@@ -35,16 +38,23 @@ impl Lexer {
 
         let inicio = self.pos;
         while self.pos < self.texto.len() && 
-              (self.texto[self.pos].is_alphanumeric() || self.texto[self.pos] == '=') {
+              (self.texto[self.pos].is_alphanumeric() || self.texto[self.pos] == '=' 
+               || self.texto[self.pos] == '\'') {
             self.pos += 1;
         }
 
         let palabra: String = self.texto[inicio..self.pos].iter().collect();
 
+        if self.texto[self.pos-1] == '\'' {
+            return Some(Token::Valor(palabra))
+        }
+
         if palabra == "toy" {
-            Some(Token::PalabraReservada("toy".to_string()))
+            Some(Token::ToyKeyword)
         } else if palabra == "kametsa" {
-            Some(Token::PalabraReservada("kametsa".to_string()))
+            Some(Token::KametsaKeyword)
+        } else if palabra == "asanki" {
+            Some(Token::AsankiKeyword) 
         }else if palabra == "="{
             Some(Token::Equal)
         }else {
@@ -71,9 +81,11 @@ fn main() {
     
     while let Some(token) = lexer.obtener_token() {
         match token {
-            Token::PalabraReservada(tipo) => println!("  {}. Palabra reservada: {}", contador,tipo),
+            Token::ToyKeyword => println!("  {}. Palabra reservada toy",contador),
+            Token::KametsaKeyword => println!("  {}. Palabra reservada kametsa", contador),
             Token::Variable(nombre) => println!("  {}. Variable: {}", contador, nombre),
             Token::Equal => println!("  {}. '='",contador),
+            Token::Valor(valor)=> println!("  {}. Valor {}",contador,valor),
         }
         contador += 1;
     }
