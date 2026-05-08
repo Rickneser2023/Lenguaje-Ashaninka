@@ -5,7 +5,7 @@ use std::env;
 enum Token {
     //int = toy; float = kametsa; double = kametsa_ints; bool = iri; string = asanki; char = pitsi;
     //void = maika
-    PalabraReservada,
+    PalabraReservada(String),
     Variable(String),
     Equal,
 }
@@ -42,8 +42,10 @@ impl Lexer {
         let palabra: String = self.texto[inicio..self.pos].iter().collect();
 
         if palabra == "toy" {
-            Some(Token::PalabraReservada)
-        } else if palabra == "="{
+            Some(Token::PalabraReservada("toy".to_string()))
+        } else if palabra == "kametsa" {
+            Some(Token::PalabraReservada("kametsa".to_string()))
+        }else if palabra == "="{
             Some(Token::Equal)
         }else {
             Some(Token::Variable(palabra))
@@ -69,7 +71,7 @@ fn main() {
     
     while let Some(token) = lexer.obtener_token() {
         match token {
-            Token::PalabraReservada => println!("  {}. Palabra reservada: toy", contador),
+            Token::PalabraReservada(tipo) => println!("  {}. Palabra reservada: {}", contador,tipo),
             Token::Variable(nombre) => println!("  {}. Variable: {}", contador, nombre),
             Token::Equal => println!("  {}. '='",contador),
         }
