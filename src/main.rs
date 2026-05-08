@@ -1,15 +1,18 @@
 use std::fs;
 use std::env;
 
+
 #[derive(Debug)]
 enum Token {
     //int = toy; float = kametsa; double = kametsa_ints; bool = iri; string = asanki; char = pitsi;
     //void = maika
     AsankiKeyword,
     ToyKeyword,
-    KametsaKeyword,
+    KametsaKeyword, 
     Variable(String),
-    Valor(String),
+    Asanki(String),
+    Toy(u32),
+    Kametsa(f32),
     Equal,
 }
 
@@ -39,23 +42,25 @@ impl Lexer {
         let inicio = self.pos;
         while self.pos < self.texto.len() && 
               (self.texto[self.pos].is_alphanumeric() || self.texto[self.pos] == '=' 
-               || self.texto[self.pos] == '\'') {
+               || self.texto[self.pos] == '\'' || self.texto[self.pos] == '.') {
             self.pos += 1;
         }
 
         let palabra: String = self.texto[inicio..self.pos].iter().collect();
 
         if self.texto[self.pos-1] == '\'' {
-            return Some(Token::Valor(palabra))
-        }
-
-        if palabra == "toy" {
+            Some(Token::Asanki(palabra))
+        } else if palabra == "toy" {
             Some(Token::ToyKeyword)
         } else if palabra == "kametsa" {
             Some(Token::KametsaKeyword)
         } else if palabra == "asanki" {
             Some(Token::AsankiKeyword) 
-        }else if palabra == "="{
+        } else if palabra.contains('.') {
+            Some(Token::Kametsa(palabra.parse::<f32>().expect("REASON"))) 
+        } else if palabra.chars().all(|c| c.is_ascii_digit()) {
+            Some(Token::Toy(palabra.parse::<u32>().expect("REASON")))
+        } else if palabra == "="{
             Some(Token::Equal)
         }else {
             Some(Token::Variable(palabra))
@@ -72,20 +77,23 @@ fn main() {
         "toy x".to_string()
     };
 
-    println!("Código: {}", codigo);
+    println!("Código: \n{}", codigo);
     println!("\nAnálisis:");
 
     let mut lexer = Lexer::nuevo(&codigo);
-    println!("{:?}",lexer.texto);
+    println!("{:?}\n",lexer.texto);
     let mut contador = 1;
     
     while let Some(token) = lexer.obtener_token() {
         match token {
-            Token::ToyKeyword => println!("  {}. Palabra reservada toy",contador),
-            Token::KametsaKeyword => println!("  {}. Palabra reservada kametsa", contador),
+            Token::ToyKeyword => println!("  {}. Palabra reservada: toy",contador),
+            Token::KametsaKeyword => println!("  {}. Palabra reservada: kametsa", contador),
+            Token::AsankiKeyword => println!("  {}. Palabra reservada: asanki",contador),
             Token::Variable(nombre) => println!("  {}. Variable: {}", contador, nombre),
+            Token::Asanki(valor)=> println!("  {}. Valor de tipo Asanki: {}",contador,valor),
+            Token::Kametsa(valor) => println!("  {}. Valor de tipo Kametsa: {}",contador,valor),
+            Token::Toy(valor) => println!("  {}. Valor de tipo Toy: {}",contador,valor),
             Token::Equal => println!("  {}. '='",contador),
-            Token::Valor(valor)=> println!("  {}. Valor {}",contador,valor),
         }
         contador += 1;
     }
